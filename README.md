@@ -11,7 +11,7 @@ import { createClient, Machine } from '@kiwicopple/fly-admin'
 const fly = createClient('FLY_API_TOKEN')
 
 // Inside an async function:
-const machines: MachineResponse[] = await fly.Machines.listMachines('myAppId')
+const machines: MachineResponse[] = await fly.Machine.listMachines('myAppId')
 ```
 
 
@@ -24,12 +24,12 @@ const machines: MachineResponse[] = await fly.Machines.listMachines('myAppId')
 
 **Machines**
 
-* `fly.Machines.listMachines()`
-* `fly.Machines.createMachine()`
-* `fly.Machines.startMachine()`
-* `fly.Machines.stopMachine()`
-* `fly.Machines.restartMachine()`
-* `fly.Machines.deleteMachine()`
+* `fly.Machine.listMachines()`
+* `fly.Machine.createMachine()`
+* `fly.Machine.startMachine()`
+* `fly.Machine.stopMachine()`
+* `fly.Machine.restartMachine()`
+* `fly.Machine.deleteMachine()`
 
 **Networks**
 
