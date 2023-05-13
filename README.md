@@ -6,12 +6,12 @@ A Typescript client for managing Fly infrastructure.
 ## Usage
 
 ```ts
-import { createClient, Machine } from '@kiwicopple/fly-admin'
+import { createClient } from '@kiwicopple/fly-admin'
 
 const fly = createClient('FLY_API_TOKEN')
 
 // Inside an async function:
-const machines: MachineResponse[] = await fly.Machine.listMachines('myAppId')
+const machines = await fly.Machine.listMachines('myAppId')
 ```
 
 
