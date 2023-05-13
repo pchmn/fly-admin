@@ -10,8 +10,12 @@ import { createClient } from '@kiwicopple/fly-admin'
 
 const fly = createClient('FLY_API_TOKEN')
 
-// Inside an async function:
-const machines = await fly.Machine.listMachines('myAppId')
+async function deployApp() {
+    const machine = await fly.Machine.createMachine('myAppId',  {
+      image: 'supabase/postgres'
+    })
+}
+
 ```
 
 
