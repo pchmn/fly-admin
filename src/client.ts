@@ -46,7 +46,6 @@ class Client {
     this.graphqlUrl = graphqlUrl || FLY_API_GRAPHQL
     this.apiUrl = apiUrl || FLY_API_HOSTNAME
     this.apiKey = apiKey
-    this.apiKey = apiKey
     this.App = new App(this)
     this.Machine = new Machine(this)
     this.Network = new Network(this)
