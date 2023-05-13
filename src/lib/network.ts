@@ -1,10 +1,10 @@
-import {gqlPostOrThrow} from './client'
+import Client from '../client'
 
 export enum AddressType {
   v4 = 'v4',
   v6 = 'v6',
   private_v6 = 'private_v6',
-  shared_v4 = 'shared_v4'
+  shared_v4 = 'shared_v4',
 }
 
 export interface AllocateIPAddressInput {
@@ -39,15 +39,6 @@ const allocateIpAddressQuery = `mutation($input: AllocateIPAddressInput!) {
   }
 }`
 
-// Ref: https://github.com/superfly/flyctl/blob/master/api/resource_ip_addresses.go#L79
-export const allocateIpAddress = async (
-  input: AllocateIPAddressInput
-): Promise<AllocateIPAddressOutput> =>
-  await gqlPostOrThrow({
-    query: allocateIpAddressQuery,
-    variables: {input}
-  })
-
 export interface ReleaseIPAddressInput {
   appId?: string
   ipAddressId?: string
@@ -70,10 +61,29 @@ const releaseIpAddressQuery = `mutation($input: ReleaseIPAddressInput!) {
   }
 }`
 
-export const releaseIpAddress = async (
-  input: ReleaseIPAddressInput
-): Promise<ReleaseIPAddressOutput> =>
-  await gqlPostOrThrow({
-    query: releaseIpAddressQuery,
-    variables: {input}
-  })
+export class Network {
+  private client: Client
+
+  constructor(client: Client) {
+    this.client = client
+  }
+
+  // Ref: https://github.com/superfly/flyctl/blob/master/api/resource_ip_addresses.go#L79
+  async allocateIpAddress(
+    input: AllocateIPAddressInput
+  ): Promise<AllocateIPAddressOutput> {
+    return this.client.gqlPostOrThrow({
+      query: allocateIpAddressQuery,
+      variables: { input },
+    })
+  }
+
+  async releaseIpAddress(
+    input: ReleaseIPAddressInput
+  ): Promise<ReleaseIPAddressOutput> {
+    return this.client.gqlPostOrThrow({
+      query: releaseIpAddressQuery,
+      variables: { input },
+    })
+  }
+}

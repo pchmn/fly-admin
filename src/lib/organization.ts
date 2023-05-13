@@ -1,4 +1,4 @@
-import {gqlPostOrThrow} from './client'
+import Client from '../client'
 
 interface OrganizationResponse {
   id: string
@@ -22,10 +22,17 @@ const getOrganizationQuery = `query($slug: String!) {
   }
 }`
 
-export const getOrganization = async (
-  slug: string
-): Promise<GetOrganizationOutput> =>
-  await gqlPostOrThrow({
-    query: getOrganizationQuery,
-    variables: {slug}
-  })
+export class Organization {
+  private client: Client
+
+  constructor(client: Client) {
+    this.client = client
+  }
+
+  async getOrganization(slug: string): Promise<GetOrganizationOutput> {
+    return this.client.gqlPostOrThrow({
+      query: getOrganizationQuery,
+      variables: { slug },
+    })
+  }
+}

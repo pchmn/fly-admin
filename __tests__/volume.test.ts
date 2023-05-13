@@ -1,7 +1,9 @@
 import nock from 'nock'
-import {describe, it} from '@jest/globals'
-import {FLY_API_GRAPHQL} from '../src/fly/client'
-import {createVolume, deleteVolume, forkVolume} from '../src/fly/volume'
+import { describe, it } from '@jest/globals'
+import { FLY_API_GRAPHQL } from '../src/client'
+import { createClient } from '../src/main'
+
+const fly = createClient('test-token')
 
 describe('volume', () => {
   const volume = {
@@ -11,8 +13,8 @@ describe('volume', () => {
     sizeGb: 2,
     encrypted: false,
     createdAt: '2023-02-23T04:58:02Z',
-    host: {id: '6d56'},
-    app: {name: 'ctwntjgykzxhfncfwrfo'}
+    host: { id: '6d56' },
+    app: { name: 'ctwntjgykzxhfncfwrfo' },
   }
 
   it('creates volume', async () => {
@@ -22,19 +24,19 @@ describe('volume', () => {
         data: {
           createVolume: {
             app: {
-              name: 'ctwntjgykzxhfncfwrfo'
+              name: 'ctwntjgykzxhfncfwrfo',
             },
-            volume
-          }
-        }
+            volume,
+          },
+        },
       })
-    const data = await createVolume({
+    const data = await fly.Volume.createVolume({
       appId: 'ctwntjgykzxhfncfwrfo',
       name: 'ctwntjgykzxhfncfwrfo_pgdata',
       region: 'hkg',
-      sizeGb: 2
+      sizeGb: 2,
     })
-    console.dir(data, {depth: 5})
+    console.dir(data, { depth: 5 })
   })
 
   it('deletes volume', async () => {
@@ -44,15 +46,15 @@ describe('volume', () => {
         data: {
           deleteVolume: {
             app: {
-              name: 'ctwntjgykzxhfncfwrfo'
-            }
-          }
-        }
+              name: 'ctwntjgykzxhfncfwrfo',
+            },
+          },
+        },
       })
-    const data = await deleteVolume({
-      volumeId: 'vol_kgj5450qk1qry2wz'
+    const data = await fly.Volume.deleteVolume({
+      volumeId: 'vol_kgj5450qk1qry2wz',
     })
-    console.dir(data, {depth: 5})
+    console.dir(data, { depth: 5 })
   })
 
   it('forks volume', async () => {
@@ -62,16 +64,16 @@ describe('volume', () => {
         data: {
           forkVolume: {
             app: {
-              name: 'ctwntjgykzxhfncfwrfo'
+              name: 'ctwntjgykzxhfncfwrfo',
             },
-            volume
-          }
-        }
+            volume,
+          },
+        },
       })
-    const data = await forkVolume({
+    const data = await fly.Volume.forkVolume({
       appId: 'ctwntjgykzxhfncfwrfo',
-      sourceVolId: 'vol_kgj5450qk1qry2wz'
+      sourceVolId: 'vol_kgj5450qk1qry2wz',
     })
-    console.dir(data, {depth: 5})
+    console.dir(data, { depth: 5 })
   })
 })

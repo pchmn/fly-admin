@@ -1,7 +1,9 @@
 import nock from 'nock'
-import {describe, it} from '@jest/globals'
-import {FLY_API_GRAPHQL} from '../src/fly/client'
-import {createApp, deleteApp} from '../src/fly/app'
+import { describe, it } from '@jest/globals'
+import { FLY_API_GRAPHQL } from '../src/client'
+import { createClient } from '../src/main'
+
+const fly = createClient('test-token')
 
 describe('app', () => {
   const organizationId = 'personal'
@@ -15,13 +17,13 @@ describe('app', () => {
             app: {
               id: 'ctwntjgykzxhfncfwrfo',
               name: 'ctwntjgykzxhfncfwrfo',
-              organization: {slug: 'supabase-dev'},
+              organization: { slug: 'supabase-dev' },
               config: {
                 definition: {
                   kill_timeout: 5,
                   kill_signal: 'SIGINT',
                   processes: [],
-                  experimental: {auto_rollback: true},
+                  experimental: { auto_rollback: true },
                   services: [
                     {
                       processes: ['app'],
@@ -30,37 +32,37 @@ describe('app', () => {
                       concurrency: {
                         soft_limit: 20,
                         hard_limit: 25,
-                        type: 'connections'
+                        type: 'connections',
                       },
                       ports: [
-                        {port: 80, handlers: ['http'], force_https: true},
-                        {port: 443, handlers: ['tls', 'http']}
+                        { port: 80, handlers: ['http'], force_https: true },
+                        { port: 443, handlers: ['tls', 'http'] },
                       ],
                       tcp_checks: [
                         {
                           interval: '15s',
                           timeout: '2s',
                           grace_period: '1s',
-                          restart_limit: 0
-                        }
+                          restart_limit: 0,
+                        },
                       ],
                       http_checks: [],
-                      script_checks: []
-                    }
+                      script_checks: [],
+                    },
                   ],
-                  env: {}
-                }
+                  env: {},
+                },
               },
-              regions: [{name: 'Hong Kong, Hong Kong', code: 'hkg'}]
-            }
-          }
-        }
+              regions: [{ name: 'Hong Kong, Hong Kong', code: 'hkg' }],
+            },
+          },
+        },
       })
-    const data = await createApp({
+    const data = await fly.App.createApp({
       name: 'ctwntjgykzxhfncfwrfo',
-      organizationId
+      organizationId,
     })
-    console.dir(data, {depth: 10})
+    console.dir(data, { depth: 10 })
   })
 
   it('deletes app', async () => {
@@ -70,12 +72,12 @@ describe('app', () => {
         data: {
           deleteApp: {
             organization: {
-              id: organizationId
-            }
-          }
-        }
+              id: organizationId,
+            },
+          },
+        },
       })
-    const data = await deleteApp('ctwntjgykzxhfncfwrfo')
-    console.dir(data, {depth: 10})
+    const data = await fly.App.deleteApp('ctwntjgykzxhfncfwrfo')
+    console.dir(data, { depth: 10 })
   })
 })

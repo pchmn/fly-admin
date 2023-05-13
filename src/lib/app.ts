@@ -1,4 +1,4 @@
-import {gqlPostOrThrow} from './client'
+import Client from '../client'
 
 export interface CreateAppInput {
   organizationId: string
@@ -54,15 +54,6 @@ const createAppQuery = `mutation($input: CreateAppInput!) {
   }
 }`
 
-// Ref: https://github.com/superfly/flyctl/blob/master/api/resource_apps.go#L329
-export const createApp = async (
-  input: CreateAppInput
-): Promise<CreateAppOutput> =>
-  await gqlPostOrThrow({
-    query: createAppQuery,
-    variables: {input}
-  })
-
 export type DeleteAppInput = string
 
 export interface DeleteAppOutput {
@@ -81,10 +72,25 @@ const deleteAppQuery = `mutation($appId: ID!) {
   }
 }`
 
-export const deleteApp = async (
-  appId: DeleteAppInput
-): Promise<DeleteAppOutput> =>
-  await gqlPostOrThrow({
-    query: deleteAppQuery,
-    variables: {appId}
-  })
+export class App {
+  private client: Client
+
+  constructor(client: Client) {
+    this.client = client
+  }
+
+  async deleteApp(appId: DeleteAppInput): Promise<DeleteAppOutput> {
+    return await this.client.gqlPostOrThrow({
+      query: deleteAppQuery,
+      variables: { appId },
+    })
+  }
+
+  // Ref: https://github.com/superfly/flyctl/blob/master/api/resource_apps.go#L329
+  async createApp(input: CreateAppInput): Promise<CreateAppOutput> {
+    return await this.client.gqlPostOrThrow({
+      query: createAppQuery,
+      variables: { input },
+    })
+  }
+}

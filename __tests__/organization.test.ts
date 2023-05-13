@@ -1,7 +1,9 @@
 import nock from 'nock'
-import {describe, it} from '@jest/globals'
-import {FLY_API_GRAPHQL} from '../src/fly/client'
-import {getOrganization} from '../src/fly/organization'
+import { describe, it } from '@jest/globals'
+import { FLY_API_GRAPHQL } from '../src/client'
+import { createClient } from '../src/main'
+
+const fly = createClient('test-token')
 
 describe('organization', () => {
   it('get personal', async () => {
@@ -14,11 +16,11 @@ describe('organization', () => {
             slug: 'personal',
             name: 'Test User',
             type: 'PERSONAL',
-            viewerRole: 'admin'
-          }
-        }
+            viewerRole: 'admin',
+          },
+        },
       })
-    const data = await getOrganization('personal')
-    console.dir(data, {depth: 5})
+    const data = await fly.Organization.getOrganization('personal')
+    console.dir(data, { depth: 5 })
   })
 })

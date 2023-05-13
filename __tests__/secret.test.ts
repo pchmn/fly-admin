@@ -1,7 +1,9 @@
 import nock from 'nock'
-import {describe, it} from '@jest/globals'
-import {FLY_API_GRAPHQL} from '../src/fly/client'
-import {setSecrets, unsetSecrets} from '../src/fly/secret'
+import { describe, it } from '@jest/globals'
+import { FLY_API_GRAPHQL } from '../src/client'
+import { createClient } from '../src/main'
+
+const fly = createClient('test-token')
 
 describe('secret', () => {
   it('sets secret', async () => {
@@ -10,24 +12,24 @@ describe('secret', () => {
       .reply(200, {
         data: {
           setSecrets: {
-            release: null
-          }
-        }
+            release: null,
+          },
+        },
       })
-    const data = await setSecrets({
+    const data = await fly.Secret.setSecrets({
       appId: 'ctwntjgykzxhfncfwrfo',
       secrets: [
         {
           key: 'POSTGRES_PASSWORD',
-          value: 'password'
+          value: 'password',
         },
         {
           key: 'JWT_SECRET',
-          value: 'super-secret-jwt-token-with-at-least-32-characters-long'
-        }
-      ]
+          value: 'super-secret-jwt-token-with-at-least-32-characters-long',
+        },
+      ],
     })
-    console.dir(data, {depth: 5})
+    console.dir(data, { depth: 5 })
   })
 
   it('unsets secret', async () => {
@@ -36,14 +38,14 @@ describe('secret', () => {
       .reply(200, {
         data: {
           unsetSecrets: {
-            release: null
-          }
-        }
+            release: null,
+          },
+        },
       })
-    const data = await unsetSecrets({
+    const data = await fly.Secret.unsetSecrets({
       appId: 'ctwntjgykzxhfncfwrfo',
-      keys: ['test-key']
+      keys: ['test-key'],
     })
-    console.dir(data, {depth: 5})
+    console.dir(data, { depth: 5 })
   })
 })

@@ -1,8 +1,8 @@
-import {gqlPostOrThrow} from './client'
+import Client from '../client'
 
 export interface SetSecretsInput {
   appId: string
-  secrets: {key: string; value: string}[]
+  secrets: { key: string; value: string }[]
   replaceAll?: boolean
 }
 
@@ -41,15 +41,6 @@ const setSecretsQuery = `mutation($input: SetSecretsInput!) {
     }
   }
 }`
-
-// Ref: https://github.com/superfly/flyctl/blob/master/api/resource_secrets.go#L5
-export const setSecrets = async (
-  input: SetSecretsInput
-): Promise<SetSecretsOutput> =>
-  await gqlPostOrThrow({
-    query: setSecretsQuery,
-    variables: {input}
-  })
 
 export interface UnsetSecretsInput {
   appId: string
@@ -92,10 +83,24 @@ const unsetSecretsQuery = `mutation($input: UnsetSecretsInput!) {
   }
 }`
 
-export const unsetSecrets = async (
-  input: UnsetSecretsInput
-): Promise<UnsetSecretsOutput> =>
-  await gqlPostOrThrow({
-    query: unsetSecretsQuery,
-    variables: {input}
-  })
+export class Secret {
+  private client: Client
+
+  constructor(client: Client) {
+    this.client = client
+  }
+
+  async setSecrets(input: SetSecretsInput): Promise<SetSecretsOutput> {
+    return await this.client.gqlPostOrThrow({
+      query: setSecretsQuery,
+      variables: { input },
+    })
+  }
+
+  async unsetSecrets(input: UnsetSecretsInput): Promise<UnsetSecretsOutput> {
+    return await this.client.gqlPostOrThrow({
+      query: unsetSecretsQuery,
+      variables: { input },
+    })
+  }
+}

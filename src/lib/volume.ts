@@ -1,4 +1,4 @@
-import {gqlPostOrThrow} from './client'
+import Client from '../client'
 
 export interface CreateVolumeInput {
   appId: string
@@ -56,15 +56,6 @@ const createVolumeQuery = `mutation($input: CreateVolumeInput!) {
   }
 }`
 
-// Ref: https://github.com/superfly/flyctl/blob/master/api/resource_volumes.go#L52
-export const createVolume = async (
-  input: CreateVolumeInput
-): Promise<CreateVolumeOutput> =>
-  await gqlPostOrThrow({
-    query: createVolumeQuery,
-    variables: {input}
-  })
-
 export interface DeleteVolumeInput {
   volumeId: string
 }
@@ -84,14 +75,6 @@ const deleteVolumeQuery = `mutation($input: DeleteVolumeInput!) {
     }
   }
 }`
-
-export const deleteVolume = async (
-  input: DeleteVolumeInput
-): Promise<DeleteVolumeOutput> =>
-  await gqlPostOrThrow({
-    query: deleteVolumeQuery,
-    variables: {input}
-  })
 
 // Ref: https://github.com/superfly/flyctl/blob/master/api/resource_volumes.go#L155
 export interface ForkVolumeInput {
@@ -133,10 +116,32 @@ const forkVolumeQuery = `mutation($input: ForkVolumeInput!) {
   }
 }`
 
-export const forkVolume = async (
-  input: ForkVolumeInput
-): Promise<ForkVolumeOutput> =>
-  await gqlPostOrThrow({
-    query: forkVolumeQuery,
-    variables: {input}
-  })
+export class Volume {
+  private client: Client
+
+  constructor(client: Client) {
+    this.client = client
+  }
+
+  // Ref: https://github.com/superfly/flyctl/blob/master/api/resource_volumes.go#L52
+  async createVolume(input: CreateVolumeInput): Promise<CreateVolumeOutput> {
+    return await this.client.gqlPostOrThrow({
+      query: createVolumeQuery,
+      variables: { input },
+    })
+  }
+
+  async deleteVolume(input: DeleteVolumeInput): Promise<DeleteVolumeOutput> {
+    return await this.client.gqlPostOrThrow({
+      query: deleteVolumeQuery,
+      variables: { input },
+    })
+  }
+
+  async forkVolume(input: ForkVolumeInput): Promise<ForkVolumeOutput> {
+    return this.client.gqlPostOrThrow({
+      query: forkVolumeQuery,
+      variables: { input },
+    })
+  }
+}
