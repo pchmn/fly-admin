@@ -54,9 +54,9 @@ async function deployApp() {
 
 **Volumes**
 
+- `fly.Volume.listVolumes()`
 - `fly.Volume.createVolume()`
 - `fly.Volume.deleteVolume()`
-- `fly.Volume.forkVolume()`
 
 ## License
 
