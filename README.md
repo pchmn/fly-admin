@@ -16,7 +16,8 @@ import { createClient } from 'fly-admin'
 const fly = createClient('FLY_API_TOKEN')
 
 async function deployApp() {
-  const machine = await fly.Machine.createMachine('myAppId', {
+  const machine = await fly.Machine.createMachine({
+    app_name: 'myAppId',
     image: 'supabase/postgres',
   })
 }
