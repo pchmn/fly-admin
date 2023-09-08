@@ -27,6 +27,8 @@ async function deployApp() {
 
 **Apps**
 
+- `fly.App.listApps()`
+- `fly.App.getApp()`
 - `fly.App.createApp()`
 - `fly.App.deleteApp()`
 
