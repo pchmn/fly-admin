@@ -5,6 +5,7 @@ import { Network } from './lib/network'
 import { Organization } from './lib/organization'
 import { Secret } from './lib/secret'
 import { Volume } from './lib/volume'
+import { Regions } from './lib/regions'
 
 export const FLY_API_GRAPHQL = 'https://api.fly.io'
 export const FLY_API_HOSTNAME = 'https://api.machines.dev'
@@ -36,6 +37,7 @@ class Client {
   private apiKey: string
   App: App
   Machine: Machine
+  Regions: Regions
   Network: Network
   Organization: Organization
   Secret: Secret
@@ -51,6 +53,7 @@ class Client {
     this.App = new App(this)
     this.Machine = new Machine(this)
     this.Network = new Network(this)
+    this.Regions = new Regions(this)
     this.Organization = new Organization(this)
     this.Secret = new Secret(this)
     this.Volume = new Volume(this)
