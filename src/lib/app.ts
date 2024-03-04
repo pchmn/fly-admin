@@ -13,6 +13,24 @@ export interface ListAppResponse {
 
 export type GetAppRequest = string
 
+const getAppQuery = `query($name: String!) {
+  app(name: $name) {
+      name
+      status
+      organization {
+        name
+        slug
+      }
+      ipAddresses {
+        nodes {
+          type
+          region
+          address
+        }
+      }
+  }
+}`
+
 export enum AppStatus {
   deployed = 'deployed',
   pending = 'pending',
@@ -26,10 +44,12 @@ export interface AppResponse {
     name: string
     slug: string
   }
-  ipAddresses: {
-    type: string
-    address: string
-  }[]
+  ipAddresses: IPAddress[]
+}
+
+export interface IPAddress {
+  type: string
+  address: string
 }
 
 export interface CreateAppRequest {
@@ -55,6 +75,20 @@ export class App {
   async getApp(app_name: GetAppRequest): Promise<AppResponse> {
     const path = `apps/${app_name}`
     return await this.client.restOrThrow(path)
+  }
+
+  async getAppDetailed(app_name: GetAppRequest): Promise<AppResponse> {
+    const { app } = await this.client.gqlPostOrThrow({
+      query: getAppQuery,
+      variables: { name: app_name },
+    }) as { app: AppResponse }
+
+    const ipAddresses = app.ipAddresses as unknown as { nodes: IPAddress[] }
+
+    return {
+      ...app,
+      ipAddresses: ipAddresses.nodes,
+    }
   }
 
   async createApp(payload: CreateAppRequest): Promise<void> {
