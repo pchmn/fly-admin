@@ -72,8 +72,8 @@ class Client {
   }
 
   async gqlPostOrThrow<U, V>(payload: GraphQLRequest<U>): Promise<V> {
-    const token = process.env.FLY_API_TOKEN
-    const resp = await crossFetch(`${FLY_API_GRAPHQL}/graphql`, {
+    const token = this.apiKey
+    const resp = await crossFetch(`${this.graphqlUrl}/graphql`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
