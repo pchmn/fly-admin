@@ -5,6 +5,7 @@ export type ListAppRequest = string
 export interface ListAppResponse {
   total_apps: number
   apps: {
+    id: string
     name: string
     machine_count: number
     network: string
@@ -15,8 +16,10 @@ export type GetAppRequest = string
 
 const getAppQuery = `query($name: String!) {
   app(name: $name) {
+      id
       name
       status
+      hostname
       organization {
         name
         slug
@@ -38,12 +41,17 @@ export enum AppStatus {
 }
 
 export interface AppResponse {
+  id: string
   name: string
   status: AppStatus
   organization: {
     name: string
     slug: string
   }
+}
+
+export interface AppDetailedResponse extends AppResponse {
+  hostname: string
   ipAddresses: IPAddress[]
 }
 
@@ -77,11 +85,11 @@ export class App {
     return await this.client.restOrThrow(path)
   }
 
-  async getAppDetailed(app_name: GetAppRequest): Promise<AppResponse> {
-    const { app } = await this.client.gqlPostOrThrow({
+  async getAppDetailed(app_name: GetAppRequest): Promise<AppDetailedResponse> {
+    const { app } = (await this.client.gqlPostOrThrow({
       query: getAppQuery,
       variables: { name: app_name },
-    }) as { app: AppResponse }
+    })) as { app: AppDetailedResponse }
 
     const ipAddresses = app.ipAddresses as unknown as { nodes: IPAddress[] }
 
