@@ -4,6 +4,7 @@ import { Machine } from './lib/machine'
 import { Network } from './lib/network'
 import { Organization } from './lib/organization'
 import { Regions } from './lib/regions'
+import { Release } from './lib/release'
 import { Secret } from './lib/secret'
 import { Volume } from './lib/volume'
 
@@ -42,6 +43,7 @@ class Client {
   Organization: Organization
   Secret: Secret
   Volume: Volume
+  Release: Release
 
   constructor(apiKey: string, { graphqlUrl, apiUrl }: ClientConfig = {}) {
     if (!apiKey) {
@@ -57,6 +59,7 @@ class Client {
     this.Organization = new Organization(this)
     this.Secret = new Secret(this)
     this.Volume = new Volume(this)
+    this.Release = new Release(this)
   }
 
   getApiKey(): string {
