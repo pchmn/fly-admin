@@ -2,6 +2,10 @@
   "name": "@pchmn/fly-admin",
   "version": "0.0.0-automated",
   "description": "A Typescript client for managing Fly infrastructure.",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "files": [
