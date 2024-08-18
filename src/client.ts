@@ -3,9 +3,9 @@ import { App } from './lib/app'
 import { Machine } from './lib/machine'
 import { Network } from './lib/network'
 import { Organization } from './lib/organization'
+import { Regions } from './lib/regions'
 import { Secret } from './lib/secret'
 import { Volume } from './lib/volume'
-import { Regions } from './lib/regions'
 
 export const FLY_API_GRAPHQL = 'https://api.fly.io'
 export const FLY_API_HOSTNAME = 'https://api.machines.dev'
@@ -95,13 +95,15 @@ class Client {
   async restOrThrow<U, V>(
     path: string,
     method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
-    body?: U
+    body?: U,
+    headers?: Record<string, string>
   ): Promise<V> {
     const resp = await crossFetch(`${this.apiUrl}/v1/${path}`, {
       method,
       headers: {
         Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
+        ...headers,
       },
       body: JSON.stringify(body),
     })

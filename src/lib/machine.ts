@@ -414,6 +414,14 @@ export class Machine {
     return await this.client.restOrThrow(path, 'POST', body)
   }
 
+  async releaseLease(payload: DeleteLeaseRequest): Promise<OkResponse> {
+    const { app_name, machine_id, nonce } = payload
+    const path = `apps/${app_name}/machines/${machine_id}/lease`
+    return await this.client.restOrThrow(path, 'DELETE', {
+      'fly-machine-lease-nonce': nonce,
+    })
+  }
+
   async cordonMachine(payload: CordonMachineRequest): Promise<OkResponse> {
     const { app_name, machine_id } = payload
     const path = `apps/${app_name}/machines/${machine_id}/cordon`
