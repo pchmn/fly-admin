@@ -1,23 +1,24 @@
 import Client from '../client'
 import {
-  ApiMachineConfig,
-  ApiMachineInit,
-  ApiMachineService,
-  ApiMachineMount,
-  ApiMachinePort,
-  ApiMachineCheck,
-  ApiMachineRestart,
-  ApiMachineGuest,
   CheckStatus as ApiCheckStatus,
   CreateMachineRequest as ApiCreateMachineRequest,
   ImageRef as ApiImageRef,
   Machine as ApiMachine,
-  StateEnum as ApiMachineState,
   SignalRequestSignalEnum as ApiMachineSignal,
+  StateEnum as ApiMachineState,
+  FlyDuration,
+  FlyMachineCheck,
+  FlyMachineConfig,
+  FlyMachineGuest,
+  FlyMachineInit,
+  FlyMachineMount,
+  FlyMachinePort,
+  FlyMachineRestart,
+  FlyMachineService,
 } from './types'
 
 // We override the generated types from openapi spec to mark fields as non-optional
-export interface MachineConfig extends ApiMachineConfig {
+export interface MachineConfig extends FlyMachineConfig {
   // The Docker image to run
   image: string
   // Optionally one of hourly, daily, weekly, monthly. Runs machine at the given interval. Interval starts at time of machine creation
@@ -97,7 +98,7 @@ export enum MachineState {
   Destroyed = 'destroyed',
 }
 
-interface MachineMount extends ApiMachineMount {
+interface MachineMount extends FlyMachineMount {
   encrypted: boolean
   // Absolute path on the VM where the volume should be mounted. i.e. /data
   path: string
@@ -118,14 +119,14 @@ export enum ConnectionHandler {
   PROXY_PROTO = 'proxy_proto',
 }
 
-interface MachinePort extends ApiMachinePort {
+interface MachinePort extends FlyMachinePort {
   // Public-facing port number
   port: number
   // Array of connection handlers for TCP-based services.
   handlers?: ConnectionHandler[]
 }
 
-interface MachineService extends ApiMachineService {
+interface MachineService extends FlyMachineService {
   protocol: 'tcp' | 'udp'
   internal_port: number
   ports: MachinePort[]
@@ -140,18 +141,18 @@ interface MachineService extends ApiMachineService {
   }
 }
 
-interface MachineCheck extends ApiMachineCheck {
+interface MachineCheck extends FlyMachineCheck {
   // tcp or http
   type: 'tcp' | 'http'
   // The port to connect to, likely should be the same as internal_port
   port: number
   // The time between connectivity checks
-  interval: string
+  interval: FlyDuration
   // The maximum time a connection can take before being reported as failing its healthcheck
-  timeout: string
+  timeout: FlyDuration
 }
 
-interface MachineGuest extends ApiMachineGuest {
+interface MachineGuest extends FlyMachineGuest {
   cpu_kind: 'shared' | 'performance'
   cpus: number
   memory_mb: number
@@ -181,11 +182,11 @@ export interface MachineResponse extends Omit<ApiMachine, 'image_ref'> {
   private_ip: string
   config: {
     env: Record<string, string>
-    init: ApiMachineInit
+    init: FlyMachineInit
     mounts: MachineMount[]
     services: MachineService[]
     checks: Record<string, MachineCheck>
-    restart: ApiMachineRestart
+    restart: FlyMachineRestart
     guest: MachineGuest
     size: 'shared-cpu-1x' | 'shared-cpu-2x' | 'shared-cpu-4x'
   } & MachineConfig
