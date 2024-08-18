@@ -1,17 +1,19 @@
-# `fly-admin`
+# `@pchmn/fly-admin`
+
+> This is a fork of https://github.com/supabase/fly-admin
 
 A Typescript client for managing Fly infrastructure.
 
 ## Install
 
 ```bash
-npm i --save fly-admin
+npm i --save @pchmn/fly-admin
 ```
 
 ## Usage
 
 ```ts
-import { createClient } from 'fly-admin'
+import { createClient } from '@pchmn/fly-admin'
 
 const fly = createClient('FLY_API_TOKEN')
 
@@ -51,6 +53,7 @@ async function deployApp() {
 - `fly.Machine.listProcesses()`
 - `fly.Machine.getLease()`
 - `fly.Machine.acquireLease()`
+- `fly.Machine.releaseLease()`
 
 **Networks**
 
@@ -75,10 +78,15 @@ async function deployApp() {
 - `fly.Volume.extendVolume()`
 - `fly.Volume.listSnapshots()`
 
+**Release**
+
+- `fly.Release.createRelease()`
+- `fly.Release.updateRelease()`
+
 **TODO**
 
 - [ ] `fly.Machine.execMachine()`
-- [ ] `fly.Machine.releaseLease()`
+- [x] `fly.Machine.releaseLease()`
 - [ ] `fly.Machine.getMetadata()`
 - [ ] `fly.Machine.updateMetadata()`
 - [ ] `fly.Machine.deleteMetadata()`

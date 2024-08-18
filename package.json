@@ -1,5 +1,5 @@
 {
-  "name": "fly-admin",
+  "name": "@pchmn/fly-admin",
   "version": "0.0.0-automated",
   "description": "A Typescript client for managing Fly infrastructure.",
   "main": "dist/main.js",
@@ -18,14 +18,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/supabase/fly-admin.git"
+    "url": "git+https://github.com/pchmn/fly-admin.git"
   },
   "keywords": [
     "fly",
     "api",
     "client"
   ],
-  "author": "Supabase",
+  "author": "pchmn",
   "license": "MIT",
   "dependencies": {
     "cross-fetch": "^3.1.5"
