@@ -1,148 +1,206 @@
-export interface FlyDefinition {
-  app?: string
-  primary_region?: string
-  build?: BuildConfig
-  deploy?: DeployConfig
-  env?: Record<string, string>
-  vm?: VmConfig[]
-  kill_signal?: string
-  kill_timeout?: string
-  swap_size_mb?: number
-  processes?: Record<string, string>
-  services?: ServiceConfig[]
-  http_service?: HttpServiceConfig
-  checks?: Record<string, HealthCheck>
-  mounts?: MountConfig[]
-  metrics?: MetricsConfig
-  statics?: StaticConfig[]
-  experimental?: ExperimentalConfig
-  consul?: ConsulConfig
-  dns?: Record<string, string>
-  runtime?: 'python' | 'nodejs' | 'go' | 'ruby' | 'rust' | 'deno' | 'dotnet'
-}
-
-interface BuildConfig {
-  image?: string
-  dockerfile?: string
-  buildpacks?: string[]
-  builder?: string
-  buildargs?: Record<string, string>
-  ignorefile?: string
-}
-
-interface DeployConfig {
-  release_command?: string
-  strategy?: 'immediate' | 'rolling' | 'canary' | 'bluegreen'
-}
-
-interface VmConfig {
-  size?: string
-  cpu_kind?: 'shared' | 'performance'
-  cpus?: number
-  memory?: string
-  memory_mb?: number
-  gpu_kind?: string
-  gpus?: number
-}
-
-interface ServiceConfig {
-  internal_port: number
-  protocol: 'tcp' | 'udp' | 'tls'
-  ports?: PortConfig[]
-  auto_stop_machines?: boolean
-  auto_start_machines?: boolean
-  min_machines_running?: number
-  concurrency?: ConcurrencyConfig
-  tcp_checks?: TcpCheckConfig[]
-  http_checks?: HttpCheckConfig[]
-}
-
-interface PortConfig {
-  port: number
-  handlers?: string[]
-  force_https?: boolean
-}
-
-interface ConcurrencyConfig {
-  type: 'connections' | 'requests'
-  soft_limit: number
-  hard_limit: number
-}
-
-interface TcpCheckConfig {
-  interval: string
-  timeout: string
-  grace_period?: string
-}
-
-interface HttpCheckConfig {
-  interval: string
-  timeout: string
-  grace_period?: string
-  method: string
-  path: string
-  protocol: 'http' | 'https'
-  tls_skip_verify?: boolean
-  headers?: Record<string, string>
-}
-
-interface HttpServiceConfig {
-  internal_port: number
-  force_https?: boolean
-  auto_stop_machines?: boolean
-  auto_start_machines?: boolean
-  min_machines_running?: number
-  processes?: string[]
-  concurrency?: ConcurrencyConfig
-  tls_options?: TlsOptions
-  headers?: Record<string, string | string[]>
-  checks?: HttpCheckConfig[]
-}
-
-interface TlsOptions {
-  alpn?: string[]
-  default_self_signed?: boolean
-}
-
-interface HealthCheck {
-  port: number
-  type: 'http' | 'tcp'
-  interval: string
-  timeout: string
-  grace_period?: string
-  method?: string
-  path?: string
-  protocol?: 'http' | 'https'
-  tls_skip_verify?: boolean
-}
-
-interface MountConfig {
-  source: string
-  destination: string
-  initial_size?: string
-}
-
-interface MetricsConfig {
-  port: number
-  path: string
-}
-
-interface StaticConfig {
-  guest_path: string
-  url_prefix: string
-}
-
-interface ExperimentalConfig {
-  enable_consul?: boolean
-  enable_vm_network_isolation?: boolean
-  private_network?: boolean
-  trace_gc?: boolean
+interface Experimental {
   cmd?: string[]
   entrypoint?: string[]
   exec?: string[]
+  auto_rollback?: boolean
+  enable_consul?: boolean
+  enable_etcd?: boolean
+  lazy_load_images?: boolean
+  attached?: {
+    secrets?: {
+      export?: Record<string, string>
+    }
+  }
 }
 
-interface ConsulConfig {
-  url?: string
-  datacenter?: string
+interface Build {
+  builder?: string
+  args?: Record<string, string>
+  buildpacks?: string[]
+  image?: string
+  settings?: Record<string, any>
+  builtin?: string
+  dockerfile?: string
+  ignorefile?: string
+  'build-target'?: string
+}
+
+interface Deploy {
+  release_command?: string
+  release_command_timeout?: string
+  strategy?: string
+  max_unavailable?: number
+  wait_timeout?: string
+}
+
+interface Mount {
+  source?: string
+  destination?: string
+  initial_size?: string
+  snapshot_retention?: number
+  auto_extend_size_threshold?: number
+  auto_extend_size_increment?: string
+  auto_extend_size_limit?: string
+  processes?: string[]
+}
+
+interface Concurrency {
+  type?: string
+  hard_limit?: number
+  soft_limit?: number
+}
+
+interface TLSOptions {
+  alpn?: string[]
+  versions?: string[]
+  default_self_signed?: boolean
+}
+
+interface HTTPOptions {
+  compress?: boolean
+  response?: {
+    headers?: Record<string, any>
+    pristine?: boolean
+  }
+  h2_backend?: boolean
+  idle_timeout?: number
+  headers_read_timeout?: number
+}
+
+interface Check {
+  interval?: string
+  timeout?: string
+  grace_period?: string
+  method?: string
+  path?: string
+  protocol?: string
+  tls_skip_verify?: boolean
+  tls_server_name?: string
+  headers?: Record<string, string>
+}
+
+interface MachineCheck {
+  command?: string[]
+  image?: string
+  entrypoint?: string[]
+  kill_signal?: string
+  kill_timeout?: string
+}
+
+interface HTTPService {
+  internal_port?: number
+  force_https?: boolean
+  auto_stop_machines?: 'off' | 'stop' | 'suspend'
+  auto_start_machines?: boolean
+  min_machines_running?: number
+  processes?: string[]
+  concurrency?: Concurrency
+  tls_options?: TLSOptions
+  http_options?: HTTPOptions
+  checks?: Check[]
+  machine_checks?: MachineCheck[]
+}
+
+interface Port {
+  port?: number
+  start_port?: number
+  end_port?: number
+  handlers?: string[]
+  force_https?: boolean
+  tls_options?: TLSOptions
+  http_options?: HTTPOptions
+  proxy_proto_options?: {
+    version?: string
+  }
+}
+
+interface Service {
+  protocol?: string
+  internal_port?: number
+  auto_stop_machines?: 'off' | 'stop' | 'suspend'
+  auto_start_machines?: boolean
+  min_machines_running?: number
+  ports?: Port[]
+  concurrency?: Concurrency
+  tcp_checks?: Omit<
+    Check,
+    | 'method'
+    | 'path'
+    | 'protocol'
+    | 'tls_skip_verify'
+    | 'tls_server_name'
+    | 'headers'
+  >[]
+  http_checks?: Check[]
+  machine_checks?: MachineCheck[]
+  processes?: string[]
+}
+
+interface File {
+  guest_path?: string
+  local_path?: string
+  secret_name?: string
+  raw_value?: string
+  processes?: string[]
+}
+
+interface Restart {
+  policy?: 'always' | 'never' | 'on-failure'
+  retries?: number
+  processes?: string[]
+}
+
+interface VM {
+  size?: string
+  memory?: string
+  cpu_kind?: string
+  cpus?: number
+  memory_mb?: number
+  gpus?: number
+  gpu_kind?: string
+  host_dedication_id?: string
+  kernel_args?: string[]
+  processes?: string[]
+}
+
+interface Static {
+  guest_path?: string
+  url_prefix?: string
+  tigris_bucket?: string
+  index_document?: string
+}
+
+interface Metric {
+  port?: number
+  path?: string
+  processes?: string[]
+}
+
+export interface FlyConfig {
+  app?: string
+  primary_region?: string
+  kill_signal?: string
+  kill_timeout?: string
+  swap_size_mb?: number
+  console_command?: string
+
+  experimental?: Experimental
+  build?: Build
+  deploy?: Deploy
+  env?: Record<string, string>
+  processes?: Record<string, string>
+  mounts?: Mount[]
+  http_service?: HTTPService
+  services?: Service[]
+  checks?: Record<
+    string,
+    Check & { port?: number; type?: string; processes?: string[] }
+  >
+  files?: File[]
+  host_dedication_id?: string
+  machine_checks?: MachineCheck[]
+  restart?: Restart[]
+  vm?: VM[]
+  statics?: Static[]
+  metrics?: Metric[]
 }

@@ -1,5 +1,5 @@
 import Client from '../client'
-import { FlyDefinition } from './release.types'
+import { FlyConfig } from './release.types'
 
 interface ReleaseResponse {
   release: {
@@ -19,7 +19,7 @@ interface CreateReleaseInput {
     | 'ROLLING'
     | 'ROLLING_ONE'
     | 'BLUE_GREEN'
-  definition: FlyDefinition
+  definition: FlyConfig
 }
 
 interface CreateReleaseOutput {
