@@ -252,9 +252,7 @@ export interface FlyDNSConfig {
   skip_registration?: boolean
 }
 
-export interface FlyDuration {
-  'time.Duration'?: FlyDurationTimeDurationEnum
-}
+export type FlyDuration = string
 
 /** EnvVar defines an environment variable to be populated from a machine field, env_var */
 export interface FlyEnvFrom {
